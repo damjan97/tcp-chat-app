@@ -1,8 +1,8 @@
 # tcp-chat-app
 
-Projekat iz Osnova računarskih mreža 1
+Local TCP terminal chat application made as a school project. Written in C.
 
-Autori: Damjan Glamočić (RA65/2015) i Mihailo Marković (RA191/2015)
+Autori: Damjan Glamočić i Mihailo Marković
 
 Prevođenje:
 
