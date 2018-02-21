@@ -40,8 +40,8 @@
 #include <fcntl.h>      //for open
 #include <unistd.h>     //for close
 #include <pthread.h>	//for pthread_creeate
-#include <stdlib.h>		//for exit
-#include <netdb.h>		//for hostent
+#include <stdlib.h>	//for exit
+#include <netdb.h>	//for hostent
 #include <sys/ioctl.h>	//for size of terminal
 
 #define DEFAULT_BUFLEN 512
@@ -55,12 +55,12 @@ void Login(char username[], char usernameTmp[], char password[]);
 /*Function which prints received message*/
 void PrintMessage(char message[]);
 
-struct winsize w;			//struct for dimensions of terminal
+struct winsize w;	//struct for dimensions of terminal
 
 int main(int argc , char *argv[])
 {
 	/*get dimensions of terminal*/
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 	
 	if(argc != 2)
 	{
@@ -68,21 +68,21 @@ int main(int argc , char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-    int sock;													//main socket for communication with server
-    struct sockaddr_in server;									//struct for server information
+    int sock;								//main socket for communication with server
+    struct sockaddr_in server;						//struct for server information
     char message[DEFAULT_BUFLEN + DEFAULT_USERNAMELEN + 2];		//username: messageTmp
-	char messageTmp[DEFAULT_BUFLEN];							//temporary buffer for message
-	char username[DEFAULT_USERNAMELEN];							//buffer for username
-	char usernameTmp[DEFAULT_USERNAMELEN + 3];					//username123
-	char password[DEFAULT_USERNAMELEN + 3];						//buffer for password
-	char *address;												//server ip address
-	char logOut[8];												//for checking if message is "#log out"
-	pthread_t receiveThread;									//thread for receiving messages
+    char messageTmp[DEFAULT_BUFLEN];					//temporary buffer for message
+    char username[DEFAULT_USERNAMELEN];					//buffer for username
+    char usernameTmp[DEFAULT_USERNAMELEN + 3];				//username123
+    char password[DEFAULT_USERNAMELEN + 3];				//buffer for password
+    char *address;							//server ip address
+    char logOut[8];							//for checking if message is "#log out"
+    pthread_t receiveThread;						//thread for receiving messages
 
-	/*get address*/
-	address = argv[1];
+    /*get address*/
+    address = argv[1];
 	
-	/*create socket*/
+    /*create socket*/
     sock = socket(AF_INET , SOCK_STREAM , 0);
     if (sock == -1)
     {
@@ -94,7 +94,7 @@ int main(int argc , char *argv[])
     server.sin_family = AF_INET;
     server.sin_port = htons(DEFAULT_PORT);
 
-	/*connect to server*/
+    /*connect to server*/
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
     {
         perror("connect failed. Error");
@@ -106,13 +106,13 @@ int main(int argc , char *argv[])
 	/*Log in*/
 	Login(username, usernameTmp, password);
 	
-	/*create messaage "username just logged in" */
+	/*create message "username just logged in" */
 	strcpy(message, username);
 	message[strlen(message) - 1] = '\0';
 	strcat(message, " just logged in");
 	strcat(message, "\0");
 
-	/*send messaage "username just logged in" to server*/
+	/*send message "username just logged in" to server*/
 	if(send(sock, message, strlen(message), 0) < 0)
 	{
 		puts("Send failed\n");
@@ -139,15 +139,15 @@ int main(int argc , char *argv[])
 		
 		/*Enter message*/
 		fgets(messageTmp, DEFAULT_BUFLEN, stdin);
-		messageTmp[strlen(messageTmp) - 1] = '\0';				//to remove enter ('\n') from the string
-		strcpy(logOut, messageTmp);							//to check if message is "#log out"
+		messageTmp[strlen(messageTmp) - 1] = '\0';		//to remove enter ('\n') from the string
+		strcpy(logOut, messageTmp);				//to check if message is "#log out"
 		
 		/*Check if message is "#log out" */
 		if(strcmp(logOut, "#log out") == 0)
 		{
 			/*Create message "username just logged out" */
 			strcpy(message, username);
-			message[strlen(message) - 1] = '\0';				//to remove enter ('\n') from the string
+			message[strlen(message) - 1] = '\0';		//to remove enter ('\n') from the string
 			strcat(message, " just logged out");
 			strcat(message, "\0");
 
@@ -165,7 +165,7 @@ int main(int argc , char *argv[])
 		
 		/*Create message "username: message" */
 		strcpy(message, username);
-		message[strlen(message) - 1] = '\0';					//to remove enter ('\n') from the string
+		message[strlen(message) - 1] = '\0';			//to remove enter ('\n') from the string
 		strcat(message, ": ");
 		strcat(message, messageTmp);
 		strcat(message, "\0");
@@ -213,7 +213,7 @@ void Login(char username[], char usernameTmp[], char password[])
 	puts("Type your username: ");
 	fgets(username, DEFAULT_USERNAMELEN, stdin);
 	strcpy(usernameTmp, username);
-	usernameTmp[strlen(usernameTmp) - 1] = '\0';				//to remove enter ('\n') from the string
+	usernameTmp[strlen(usernameTmp) - 1] = '\0';		//to remove enter ('\n') from the string
 	strcat(usernameTmp, "123");
 	puts("If you typed wrong username, type >>>> #back <<<< to enter it again\n");
 
@@ -225,11 +225,11 @@ void Login(char username[], char usernameTmp[], char password[])
 		/*If you typed wrong username*/
 		if(strcmp(password, "#back") == 0)
 		{
-			username[0] = '\0';									//clear buffer
-			usernameTmp[0] = '\0';								//clear buffer
+			username[0] = '\0';			//clear buffer
+			usernameTmp[0] = '\0';			//clear buffer
 			puts("Type your username: ");
 			fgets(username, DEFAULT_USERNAMELEN, stdin);
-			strcpy(usernameTmp, username);						//to check if password is username123
+			strcpy(usernameTmp, username);		//to check if password is username123
 			usernameTmp[strlen(usernameTmp) - 1] = '\0';		//to remove enter ('\n') from the string
 			strcat(usernameTmp, "123");
 		}else
@@ -248,9 +248,9 @@ void Login(char username[], char usernameTmp[], char password[])
 
 void PrintMessage(char message[])
 {
-	char str[w.ws_col - (strlen(message) % w.ws_col) - 1];					//for printing spaces (' ')
-	memset(str, ' ', w.ws_col - (strlen(message) % w.ws_col) - 1);			//fill buffer with spaces (' ')
+	char str[w.ws_col - (strlen(message) % w.ws_col) - 1];			//for printing spaces (' ')
+	memset(str, ' ', w.ws_col - (strlen(message) % w.ws_col) - 1);		//fill buffer with spaces (' ')
 	str[w.ws_col - strlen(message) - 1] = '\0';
-	printf("%s", str);														//print spaces (' ')
-	printf("%s\n", message);												//print message which will end at next-to-last position of terminal
+	printf("%s", str);							//print spaces (' ')
+	printf("%s\n", message);	//print message which will end at next-to-last position of terminal
 }
